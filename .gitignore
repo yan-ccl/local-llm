@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local Docker overrides
+docker-compose.override.yml
+
+# Model caches (should live in named volumes, not the repo)
+models/
+*.gguf
+*.bin
+*.safetensors
