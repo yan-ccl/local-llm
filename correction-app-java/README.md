@@ -32,6 +32,12 @@ java -jar target/correction-app-java-0.1.0.jar
 
 The service listens on `http://localhost:8000`.
 
+Open the web page:
+
+```bash
+http://localhost:8000/
+```
+
 ## Run With Docker
 
 ```bash

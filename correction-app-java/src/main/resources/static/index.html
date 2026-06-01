@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>中文文本纠错</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="workspace" aria-label="中文文本纠错">
+      <header class="topbar">
+        <div>
+          <h1>中文文本纠错</h1>
+          <p id="serviceStatus" class="status-line">正在连接服务...</p>
+        </div>
+        <button id="healthButton" class="icon-button" type="button" title="刷新服务状态" aria-label="刷新服务状态">
+          <span aria-hidden="true">↻</span>
+        </button>
+      </header>
+
+      <div class="editor-grid">
+        <section class="panel input-panel" aria-label="输入">
+          <div class="panel-header">
+            <h2>原文</h2>
+            <span id="charCount" class="meta">0 / 2000</span>
+          </div>
+
+          <textarea id="sourceText" maxlength="2000" spellcheck="false">我的帐号昨天被盗了。</textarea>
+
+          <div class="toolbar">
+            <div id="modeGroup" class="segmented" role="radiogroup" aria-label="纠错模式">
+              <button class="segment is-active" type="button" data-mode="quick" role="radio" aria-checked="true">quick</button>
+              <button class="segment" type="button" data-mode="standard" role="radio" aria-checked="false">standard</button>
+              <button class="segment" type="button" data-mode="deep" role="radio" aria-checked="false">deep</button>
+            </div>
+            <div class="actions">
+              <button id="clearButton" class="secondary" type="button">清空</button>
+              <button id="submitButton" class="primary" type="button">纠错</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel result-panel" aria-label="结果">
+          <div class="panel-header">
+            <h2>结果</h2>
+            <span id="elapsed" class="meta">未运行</span>
+          </div>
+
+          <div id="correctedText" class="result-text empty">等待输入</div>
+
+          <div class="summary-row">
+            <div>
+              <span class="label">来源</span>
+              <div id="sources" class="chips"></div>
+            </div>
+            <div>
+              <span class="label">状态</span>
+              <div id="runState" class="run-state">待处理</div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section class="panel detail-panel" aria-label="修改明细">
+        <div class="panel-header">
+          <h2>修改明细</h2>
+          <span id="editCount" class="meta">0 条</span>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>位置</th>
+                <th>原文</th>
+                <th>建议</th>
+                <th>类型</th>
+                <th>来源</th>
+                <th>置信度</th>
+              </tr>
+            </thead>
+            <tbody id="editsBody">
+              <tr>
+                <td colspan="6" class="empty-cell">暂无修改</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="notes" class="notes" hidden></div>
+      </section>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
