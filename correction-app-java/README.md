@@ -70,8 +70,8 @@ curl -X POST http://localhost:8000/correct \
 Modes:
 
 - `quick`: rules only in the current Java port
-- `standard`: rules + LLM when available and needed
-- `deep`: always asks LLM when available
+- `standard`: rules + conservative LLM typo substitutions when available
+- `deep`: always asks LLM when available and allows broader grammar/missing/redundant edits
 
 Health:
 

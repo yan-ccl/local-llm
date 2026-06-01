@@ -18,9 +18,10 @@ import java.util.Map;
 public class LlmSource implements CandidateSource {
     private static final String PROMPT = """
         你是严谨的中文校对助手。请改正下面句子中的错别字、用词错误、语病、标点、漏字和多字。要求：
-        1. 只在确有错误时改动，没有把握就保持原样，绝不改写句子风格；
-        2. 不要解释，不要增删与纠错无关的内容；
-        3. 严格输出 JSON：{"corrected": "改正后的完整句子"}。
+        1. 只做最小必要纠错，没有把握就保持原样；
+        2. 绝不改写句子风格，绝不替换同义词，绝不扩写或缩写原词组；
+        3. 不要解释，不要增删与纠错无关的内容；
+        4. 严格输出 JSON：{"corrected": "改正后的完整句子"}。
 
         句子：%s""";
 

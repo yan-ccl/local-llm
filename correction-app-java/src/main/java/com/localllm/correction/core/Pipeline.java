@@ -70,7 +70,7 @@ public class Pipeline {
             try {
                 List<Edit> llmEdits = llm.propose(text);
                 sourcesUsed.add(llm.name());
-                llmEdits = guardLlm(llmEdits, text, notes);
+                llmEdits = guardLlm(llmEdits, text, mode, notes);
                 candidates.addAll(corroborate(filterResult.uncertain(), llmEdits));
                 candidates.addAll(llmEdits);
             } catch (Exception exc) {
@@ -122,7 +122,7 @@ public class Pipeline {
         return uncertainCount > 0 || !macbertAvailable;
     }
 
-    private List<Edit> guardLlm(List<Edit> llmEdits, String text, List<String> notes) {
+    private List<Edit> guardLlm(List<Edit> llmEdits, String text, String mode, List<String> notes) {
         int touched = llmEdits.stream()
             .mapToInt(edit -> Math.max(edit.end() - edit.start(), edit.suggestion().length()))
             .sum();
@@ -130,7 +130,43 @@ public class Pipeline {
             notes.add("LLM 改动比例过高（" + touched + "/" + text.length() + "），疑似整句改写，已忽略其候选。");
             return List.of();
         }
+        if (Modes.STANDARD.equals(mode)) {
+            List<Edit> safe = llmEdits.stream()
+                .filter(this::isStandardSafeLlmEdit)
+                .toList();
+            int dropped = llmEdits.size() - safe.size();
+            if (dropped > 0) {
+                notes.add("standard 模式已忽略 " + dropped + " 个 LLM 非保守候选。");
+            }
+            return safe;
+        }
         return llmEdits;
+    }
+
+    private boolean isStandardSafeLlmEdit(Edit edit) {
+        if (!ErrorTypes.TYPO.equals(edit.type())) {
+            return false;
+        }
+        if (edit.isInsertion() || edit.isDeletion()) {
+            return false;
+        }
+        if (edit.original().length() != edit.suggestion().length()) {
+            return false;
+        }
+        if (edit.original().isEmpty() || edit.original().length() > 2) {
+            return false;
+        }
+        return allCjk(edit.original()) && allCjk(edit.suggestion());
+    }
+
+    private boolean allCjk(String text) {
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (ch < '\u4e00' || ch > '\u9fff') {
+                return false;
+            }
+        }
+        return true;
     }
 
     private List<Edit> corroborate(List<Edit> uncertain, List<Edit> llmEdits) {

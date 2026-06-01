@@ -57,4 +57,72 @@ class CoreTests {
         assertThat(result.corrected()).isEqualTo("我的账号很好。");
         assertThat(result.sourcesUsed()).containsExactly(Sources.RULE);
     }
+
+    @Test
+    void standardModeDropsLlmRewritesButKeepsTypos() {
+        CandidateSource llm = new CandidateSource() {
+            @Override
+            public String name() {
+                return Sources.LLM;
+            }
+
+            @Override
+            public boolean available() {
+                return true;
+            }
+
+            @Override
+            public List<Edit> propose(String text) {
+                return List.of(
+                    new Edit(4, 5, "新", "心", Sources.LLM, 0.75, ErrorTypes.TYPO),
+                    new Edit(6, 8, "非常", "很", Sources.LLM, 0.75, ErrorTypes.GRAMMAR)
+                );
+            }
+        };
+
+        Pipeline pipeline = new Pipeline(
+            new RuleLayer(Map.of()),
+            new Whitelist(List.of()),
+            null,
+            llm,
+            Thresholds.defaults(),
+            Set.of()
+        );
+
+        PipelineResult result = pipeline.correct("今天我的新情非常好。", Modes.STANDARD);
+        assertThat(result.corrected()).isEqualTo("今天我的心情非常好。");
+        assertThat(result.notes()).anyMatch(note -> note.contains("非保守候选"));
+    }
+
+    @Test
+    void deepModeStillAllowsGrammarEdits() {
+        CandidateSource llm = new CandidateSource() {
+            @Override
+            public String name() {
+                return Sources.LLM;
+            }
+
+            @Override
+            public boolean available() {
+                return true;
+            }
+
+            @Override
+            public List<Edit> propose(String text) {
+                return List.of(new Edit(2, 4, "非常", "很", Sources.LLM, 0.75, ErrorTypes.GRAMMAR));
+            }
+        };
+
+        Pipeline pipeline = new Pipeline(
+            new RuleLayer(Map.of()),
+            new Whitelist(List.of()),
+            null,
+            llm,
+            Thresholds.defaults(),
+            Set.of()
+        );
+
+        PipelineResult result = pipeline.correct("天气非常好。", Modes.DEEP);
+        assertThat(result.corrected()).isEqualTo("天气很好。");
+    }
 }
