@@ -1,0 +1,49 @@
+# 白名单：受保护的专业术语。merge 层会否决任何触碰这些片段的修改。
+# 一行一个词条，# 开头为注释。匹配为子串（区分大小写）。
+# 收录原则：通用模型可能"想当然"改错的领域术语、英文名、缩写。
+
+# 编程语言 / 框架 / 平台
+Python
+FastAPI
+Docker
+Kubernetes
+Ollama
+ONNX
+GitHub
+Linux
+macOS
+Windows
+Nginx
+Redis
+MySQL
+PostgreSQL
+PyTorch
+Transformers
+
+# 缩写 / 协议
+API
+URL
+HTTP
+HTTPS
+JSON
+SQL
+GPU
+CPU
+TCP
+UDP
+SSL
+TLS
+JWT
+OAuth
+DNS
+CDN
+
+# 安全 / IT 术语（易被通用模型误改）
+零信任
+中间人攻击
+拒绝服务攻击
+渗透测试
+反序列化
+最小权限
+哈希值
+非对称加密
